@@ -69,36 +69,19 @@
         location.href='<c:url value="/cust/get"/> '
       });
 
-      this.makeMarkers(map, target);
-
+      this.getData(map, target);
     },
-    makeMarkers:function(map, target){
-      let datas = [];
-      if(target == 100){
-        datas = [
-          {lat:37.564472, lng:126.990841, title:'순대국1', img:'ss1.jpg', target:101},
-          {lat:37.544472, lng:126.970841, title:'순대국2', img:'ss2.jpg', target:102},
-          {lat:37.564472, lng:126.970841, title:'순대국3', img:'ss3.jpg', target:103},
-          {lat:37.565472, lng:126.980841, title:'순대국4', img:'ss4.jpg', target:104},
-          {lat:37.563472, lng:126.974841, title:'순대국5', img:'ss5.jpg', target:105},
-          {lat:37.565472, lng:126.972841, title:'순대국6', img:'ss6.jpg', target:106},
-          {lat:37.566472, lng:126.971841, title:'순대국7', img:'ss7.jpg', target:107}
-        ];
-      }else if(target == 200){
-        datas = [
-          {lat:35.176109, lng:129.165474, title:'순대국1', img:'ss1.jpg', target:201},
-          {lat:35.171109, lng:129.174474, title:'순대국2', img:'ss2.jpg', target:202},
-          {lat:35.179109, lng:129.172474, title:'순대국3', img:'ss3.jpg', target:203},
-          {lat:35.173109, lng:129.166474, title:'순대국4', img:'ss4.jpg', target:204}
-        ];
-      }else if(target == 300){
-        datas = [
-          {lat:33.251645, lng:126.415800, title:'순대국1', img:'ss1.jpg', target:301},
-          {lat:33.260645, lng:126.411800, title:'순대국2', img:'ss2.jpg', target:302},
-          {lat:33.258645, lng:126.420800, title:'순대국3', img:'ss3.jpg', target:303},
-          {lat:33.261645, lng:126.415000, title:'순대국4', img:'ss4.jpg', target:304}
-        ];
-      }
+    getData:function(map, target){
+      $.ajax({
+        url:'/getmarkers',
+        data:{target:target},
+        success:(datas)=>{
+          this.makeMarkers(map, datas);
+        }
+      });
+    },
+    makeMarkers:function(map, datas){
+
       let imgSrc1 = 'https://t1.daumcdn.net/localimg/localimages/07/2012/img/marker_p.png';
       let imgSrc2 = '<c:url value="/img/down.png"/> ';
 
