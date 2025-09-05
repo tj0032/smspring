@@ -11,38 +11,13 @@
   let map1 = {
     addr:null,
     map:null,
-    markers:[],  // 현재 지도에 찍힌 마커들 보관
-
-    // 임시 데이터(프론트 전용) — 나중에 서버 데이터로 교체 예정
-    CONVENIENCE_DATA: [
-      {title:'편의점1', img:'cv1.jpg', lat:36.810354, lng:127.076886},
-      {title:'편의점2', img:'cv2.jpg', lat:36.809544, lng:127.076494},
-      {title:'편의점3', img:'cv3.jpg', lat:36.809089, lng:127.076449},
-      {title:'편의점4', img:'cv4.jpg', lat:36.803889, lng:127.071342},
-      {title:'편의점5', img:'cv5.jpg', lat:36.804287, lng:127.068841},
-      {title:'편의점6', img:'cv6.jpg', lat:36.802142, lng:127.067310},
-      {title:'편의점7', img:'cv7.jpg', lat:36.800446, lng:127.069313},
-      {title:'편의점8', img:'cv8.jpg', lat:36.799118, lng:127.075042},
-    ],
-    HOSPITAL_DATA: [
-      {title:'병원1', img:'hos1.jpg', lat:36.809154, lng:127.075938},
-      {title:'병원2', img:'hos2.jpg', lat:36.798488, lng:127.063438},
-      {title:'병원3', img:'hos3.jpg', lat:36.799651, lng:127.060157},
-      {title:'병원4', img:'hos4.jpg', lat:36.799189, lng:127.059778},
-      {title:'병원5', img:'hos5.jpg', lat:36.798703, lng:127.059338},
-      {title:'병원6', img:'hos6.jpg', lat:36.815246, lng:127.065039},
-      {title:'병원7', img:'hos7.jpg', lat:36.817840, lng:127.057919},
-      {title:'병원8', img:'hos8.jpg', lat:36.787861, lng:127.085983},
-    ],
-
     init:function(){
       this.makeMap();
-      $('#btn1').click(()=>{ // 병원
-        this.renderMarkers(this.HOSPITAL_DATA);
+      $('#btn1').click(()=>{
+        this.getData(10);
       });
-      $('#btn2').click(()=>{ // 편의점
-        this.addr ? this.renderMarkers(this.CONVENIENCE_DATA)
-                : alert('주소를 찾을수 없어요');
+      $('#btn2').click(()=>{
+        this.addr ? this.getData(20) : alert('주소를 찾을수 없어요');
       });
     },
 
@@ -50,7 +25,7 @@
       let mapContainer = document.getElementById('map1');
       let mapOption = {
         center: new kakao.maps.LatLng(37.538453, 127.053110),
-        level: 7
+        level: 5
       }
       this.map = new kakao.maps.Map(mapContainer, mapOption);
       let mapTypeControl = new kakao.maps.MapTypeControl();
@@ -59,18 +34,21 @@
       this.map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
       if (navigator.geolocation) {
+        // GeoLocation을 이용해서 접속 위치를 얻어옵니다
         navigator.geolocation.getCurrentPosition((position)=>{
-          let lat = position.coords.latitude;
-          let lng = position.coords.longitude;
+          let lat = position.coords.latitude;  // 위도
+          let lng = position.coords.longitude; // 경도
+          $('#latlng').html(lat+' '+lng);
           let locPosition = new kakao.maps.LatLng(lat, lng);
           this.goMap(locPosition);
         });
+
       }else{
         alert('지원하지 않습니다.');
-      }
+      } // end if
     },
-
     goMap: function(locPosition){
+      // 마커를 생성합니다
       let marker = new kakao.maps.Marker({
         map: this.map,
         position: locPosition
@@ -78,10 +56,12 @@
       this.map.panTo(locPosition);
 
       let geocoder = new kakao.maps.services.Geocoder();
+      // 간단 주소 호출
       geocoder.coord2RegionCode(locPosition.getLng(), locPosition.getLat(), this.addDisplay1.bind(this));
+      // 상세 주소 호출
       geocoder.coord2Address(locPosition.getLng(), locPosition.getLat(), this.addDisplay2.bind(this));
-    },
 
+    },
     addDisplay1:function(result, status){
       if (status === kakao.maps.services.Status.OK) {
         $('#addr1').html(result[0].address_name);
@@ -95,51 +75,24 @@
         $('#addr2').html(detailAddr);
       }
     },
+    getData:function(type){
 
-    // 기존 마커 제거
-    clearMarkers:function(){
-      this.markers.forEach(m => m.setMap(null));
-      this.markers = [];
-    },
-
-    // 리스트로 마커 찍기 + 인포윈도우 + 화면 범위 맞추기
-    renderMarkers:function(list){
-      this.clearMarkers();
-      if(!list || list.length === 0) return;
-
-      const bounds = new kakao.maps.LatLngBounds();
-
-      list.forEach(item=>{
-        const pos = new kakao.maps.LatLng(item.lat, item.lng);
-        const marker = new kakao.maps.Marker({ position: pos, map: this.map });
-
-        const iwContent =
-                '<div style="padding:6px 8px;">'
-                + '<div style="font-weight:bold;">'+ item.title +'</div>'
-                + '<img src="/img/'+ item.img +'" style="width:80px;margin-top:4px;">'
-                + '</div>';
-        const iw = new kakao.maps.InfoWindow({ content: iwContent });
-
-        kakao.maps.event.addListener(marker, 'mouseover', () => iw.open(this.map, marker));
-        kakao.maps.event.addListener(marker, 'mouseout',  () => iw.close());
-
-        this.markers.push(marker);
-        bounds.extend(pos);
+      $.ajax({
+        url:'/getaddrshop',
+        data:{addr:this.addr, type:type},
+        success:(result)=>{alert(result)}
       });
-
-      this.map.setBounds(bounds);
-    },
+    }
   }
-
   $(function(){
     map1.init()
   })
 </script>
 
 
-
 <div class="col-sm-10">
   <h2>Map1</h2>
+  <h5 id="latlng"></h5>
   <h3 id="addr1"></h3>
   <h3 id="addr2"></h3>
   <button id="btn1" class="btn btn-primary">병원</button>
