@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <div class="col-sm-10">
-    <h2>Cust Get Page</h2>
+    <h2>Cust GetPage Page</h2>
     <table class="table table-bordered">
         <thead>
         <tr>
@@ -14,7 +14,7 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach var="c" items="${clist}">
+        <c:forEach var="c" items="${clist.getList()}">
             <tr>
                 <td>${c.custId}</td>
                 <td>${c.custName}</td>
@@ -32,4 +32,5 @@
         </c:forEach>
         </tbody>
     </table>
+    <jsp:include page="../page.jsp"/>
 </div>
