@@ -10,6 +10,11 @@ server:
       charset: UTF-8
       force: true
 spring:
+  messages:
+    basename: message
+    encoding: utf-8
+    cache-duration: 10
+    fallback-to-system-locale: false
   config:
     import: optional:file:.env[.properties]  # .env import
   mvc:
@@ -37,17 +42,11 @@ app:
   dir:
     imgsdir: file:///C:/smspring/imgs/     # 화면 출력 용
     uploadimgsdir: C:/smspring/imgs/    # 파일 Write 용
+    logsdir: file:///C:/smspring/logs/     # 화면 출력 용
+    logsdirRead: C:/smspring/logs/ #
+
   key:
     skey: ${MY_KEY}
     algo: PBEWithMD5AndDES
-
-
-
-
-
-
-
-
-
-
-
+    wkey: ENC(hW0+p3DUC5Nn8Rm3z3d+/1sbYmcwJiyGo6c0JDi2rkfzjnSGZuiXDbCQCuEyQWesm1sPOIAkAv9dLnsrF5G8ePf5vosdDTK2mXegikGXAXWc7i3udkh3QQ6bY/hqBEyo47Tm5fphNoY=)
+    owkey: ENC(MeEnJcxBsYLYu/4j5TzH/sstmqWrxreAVFzHQkmaRu6DjQIKNVTfWYxR0LXH6aEJ)
