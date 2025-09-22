@@ -12,6 +12,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Value("${app.dir.imgsdir}")
     String imgdir;
+
     @Value("${app.dir.logsdir}")
     String logdir;
 
@@ -19,6 +20,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/imgs/**").addResourceLocations(imgdir);
         registry.addResourceHandler("/logs/**").addResourceLocations(logdir);
+
     }
 
 }

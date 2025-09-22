@@ -1,6 +1,7 @@
 package edu.sm.app.service;
 
 import edu.sm.app.dto.Content;
+import edu.sm.app.dto.Marker;
 import edu.sm.app.dto.Search;
 import edu.sm.app.repository.ContentRepository;
 import edu.sm.common.frame.SmService;
