@@ -49,6 +49,10 @@
     <script src="https://code.highcharts.com/modules/non-cartesian-zoom.js"></script>
     <script src="https://code.highcharts.com/modules/data.js"></script>
 
+    <%-- Web Socket Lib --%>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+
     <script>
         let index = {
             type:'#',
@@ -132,6 +136,7 @@
         <hr class="sidebar-divider my-0">
 
         <c:if test="${sessionScope.admin != null}">
+
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
                 <a class="nav-link" href="<c:url value="/"/>">
@@ -155,56 +160,60 @@
                     <span>chart</span></a>
             </li>
 
-
+            <c:if test="${sessionScope.admin.adminRole == 'super'}">
+                <li class="nav-item active">
+                    <a class="nav-link" href="<c:url value="/chart" />">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span>admin</span></a>
+                </li>
+            </c:if>
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Admin Menu
-            </div>
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                   aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Cust</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Customer Management:</h6>
-                        <a class="collapse-item" href="/cust/add">Add</a>
-                        <a class="collapse-item" href="<c:url value="/cust/get"/>">Get</a>
-                        <a class="collapse-item" href="<c:url value="/cust/logininfo"/>">Login Info</a>
-
-                    </div>
-                </div>
-            </li>
-
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                   aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Product</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                     data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Product Management:</h6>
-                        <a class="collapse-item" href="<c:url value="/product/add"/>">Add</a>
-                        <a class="collapse-item" href="<c:url value="/product/get"/>">Get</a>
-                    </div>
-                </div>
-            </li>
-
         </c:if>
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Admin Menu
+        </div>
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+               aria-expanded="true" aria-controls="collapseTwo">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Cust</span>
+            </a>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Customer Management:</h6>
+                    <a class="collapse-item" href="/cust/add">Add</a>
+                    <a class="collapse-item" href="<c:url value="/cust/get"/>">Get</a>
+                    <a class="collapse-item" href="<c:url value="/cust/inquiry"/>">Inquiry</a>
+                    <a class="collapse-item" href="<c:url value="/cust/logininfo"/>">Login Info</a>
+
+                </div>
+            </div>
+        </li>
+
+        <!-- Nav Item - Utilities Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+               aria-expanded="true" aria-controls="collapseUtilities">
+                <i class="fas fa-fw fa-wrench"></i>
+                <span>Product</span>
+            </a>
+            <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+                 data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Product Management:</h6>
+                    <a class="collapse-item" href="<c:url value="/product/add"/>">Add</a>
+                    <a class="collapse-item" href="<c:url value="/product/get"/>">Get</a>
+                </div>
+            </div>
+        </li>
 
 
         <!-- Divider -->
         <hr class="sidebar-divider">
-
-
 
 
 
@@ -450,8 +459,6 @@
                                     <span class="mr-2 d-none d-lg-inline text-gray-600 small">${sessionScope.admin.adminId}</span>
                                     <img class="img-profile rounded-circle"
                                          src="<c:url value="/img/undraw_profile.svg"/>">
-
-
                                 </a>
                                 <!-- Dropdown - User Information -->
                             </li>
